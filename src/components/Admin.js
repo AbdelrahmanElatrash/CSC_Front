@@ -7,16 +7,19 @@ import Delete from './Delete';
 import Adduser from './Adduser';
 import AssignSubject from './AssignSubject';
 import Addsubject from './Addsubject'
+
+
 const UserList = () => {
-const [users, setUsers] = useState([]);
-const [showFlag,setShowFlag] = useState(false);
-const [clickedUser, setClickedUser] = useState({});
-const [updateFlag,setUpdateFlag] = useState(false);
-const [deleteConfirmationFlag, setDeleteConfirmationFlag] = useState(false);
-const [addFlag, setAddFlag] = useState(false);
-const [newArr, setNewArr] =useState([]);
-const [subjectFlag, setsubjectFlag] = useState(false);
-const [showaddsubjectFlag,setshowaddsubjectFlag] = useState(false);
+
+    const [users, setUsers] = useState([]);
+    const [showFlag,setShowFlag] = useState(false);
+    const [clickedUser, setClickedUser] = useState({});
+    const [updateFlag,setUpdateFlag] = useState(false);
+    const [deleteConfirmationFlag, setDeleteConfirmationFlag] = useState(false);
+    const [addFlag, setAddFlag] = useState(false);
+    const [newArr, setNewArr] =useState([]);
+    const [subjectFlag, setsubjectFlag] = useState(false);
+    const [showaddsubjectFlag,setshowaddsubjectFlag] = useState(false);
 
 
 const handleShow = (item) =>{
@@ -97,44 +100,42 @@ const takeNewArrFromChild = (arr) => {
 
   return (
     <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Username</th>
-            <th>Email</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((item) => (
-            <tr key={item.id}>
-              <td>{item.username}</td>
-              <td>{item.email}</td>
-              <td>
-              <Button variant="success" onClick={() =>{showUpdateModal(item)}}>Edit</Button>
-              <Button variant="danger" onClick={() =>showDeleteConfirmation(item)} >Delete</Button>
-                
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      <div className=''>
       
-      <div>
-      
-      {
-            <tr >
-             
-              <td>
               <Button variant="primary" onClick={() =>{showAddModal()}}>Add</Button>
               <Button variant="primary" onClick={() =>{showSubjectModal()}}>Subject</Button>
               <Button variant="primary" onClick={() =>{showAddSubjectModal()}}>Add Subject</Button> 
-              </td>
-            </tr>
-            
-          }
-
       </div>
+
+      <div>
+          <table>
+            <thead>
+                <tr>
+                  <th>Username</th>
+                  <th>Email</th>
+                  <th>role</th>
+                  <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+              {users.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.username}</td>
+                  <td>{item.email}</td>
+                  <td>{item.role}</td>
+                  <td>
+                  <Button variant="success" onClick={() =>{showUpdateModal(item)}}>Edit</Button>
+                  <Button variant="danger" onClick={() =>showDeleteConfirmation(item)} >Delete</Button>
+                    
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+      </div>
+
+      
       
       <Adminmodal showFlag={showFlag} handleclose={handleclose} userData={clickedUser}/>
       <UpdateModal  updateFlag={updateFlag} closeUpdateModal={closeUpdateModal} item={clickedUser}  takeNewArrFromChild={takeNewArrFromChild} />

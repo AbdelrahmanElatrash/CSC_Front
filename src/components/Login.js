@@ -1,74 +1,92 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Login.css';
+import axios from 'axios'
 
-export default function Login() {
+
+const Login=() =>{
+
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-
-  });
+  const [email,setEmail]=useState('')
+  const [password,setPassword]=useState('')
    
-  const [userData, setUserData] = useState(null); 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
-  };
+  const [userData, setUserData] = useState({}); 
 
+  
+  
   const handleSubmit = async (e) => {
     
     e.preventDefault();
     setEmailError('');
     setPasswordError('');
 
+    
     try {
-      const response = await fetch('http://localhost:3001/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
+
+      axios.post('http://localhost:3001/login', {"email":email,"password":password})
+      .then(res=>{
+        console.log(res.data);
+        const data=res.data
+        setUserData(data)
+        // localStorage.setItem('userData', JSON.stringify(userData));
+        // Redirect to the home page or perform other actions
+        window.location.href = 'http://localhost:3000/home';
+      })
+      .catch(err=>{
+        if (err.response.status===403){
+          alert('this account is inactive please wait for the admonstrator to activate your account ')
+        }if (err.response.status===404) {
+            alert('account not found')
+        } else {
+          console.log(err.response.status);
+        }
       });
 
-      if (response.ok) {
-        const userData = await response.json();
-        userData.email = formData.email; // Include email in userData
-userData.password = formData.password; // Include password in userData
-userData.id = formData.id; // Include email in userData
+      
+
+      // if (response.ok) {
+      //   const userData = await response.json();
+      //   userData.email = formData.email; // Include email in userData
+      //   userData.password = formData.password; // Include password in userData
+      //   userData.id = formData.id; // Include email in userData
 
 
 
 
-        if (userData.is_active) {
-          // Successful login, store user data and redirect to the home page
-          console.log('Login successful');
-          localStorage.setItem('userData', JSON.stringify(userData));
-          setUserData(userData); // Store user data in the state
-          // Redirect to the home page or perform other actions
-          window.location.href = 'http://localhost:3000/';
-        } else {
-          // Handle the case when the account is not active
-          console.error('Account is inactive');
-          setEmailError('Account is inactive');
-        }
-      } else {
-        // Handle other login errors (e.g., user not found, incorrect password)
-        const errorData = await response.json();
-        if (errorData.error === 'user_not_found') {
-          setEmailError('User not registered.');
-        } else if (errorData.error === 'incorrect_password') {
-          setPasswordError('Incorrect password.');
-        } else {
-          console.error('Login failed:', errorData.error);
-        }
-      }
+  //       if (userData.is_active) {
+  //         // Successful login, store user data and redirect to the home page
+  //         console.log('Login successful');
+  //         localStorage.setItem('userData', JSON.stringify(userData));
+  //         setUserData(userData); // Store user data in the state
+  //         // Redirect to the home page or perform other actions
+  //         window.location.href = 'http://localhost:3000/';
+  //       } else {
+  //         // Handle the case when the account is not active
+  //         console.error('Account is inactive');
+  //         setEmailError('Account is inactive');
+  //       }
+  //     } else {
+  //       // Handle other login errors (e.g., user not found, incorrect password)
+  //       const errorData = await response.json();
+  //       if (errorData.error === 'user_not_found') {
+  //         setEmailError('User not registered.');
+  //       } else if (errorData.error === 'incorrect_password') {
+  //         setPasswordError('Incorrect password.');
+  //       } else {
+  //         console.error('Login failed:', errorData.error);
+  //       }
+  //     }
     } catch (error) {
       console.error('Error:', error);
     }
   };
 
-  
+  useEffect(()=>{
+    localStorage.setItem('userData', JSON.stringify(userData));
+    return ()=>{
+      localStorage.setItem('userData', JSON.stringify(userData));
+    }
+  },[userData])
 
   
   return (
@@ -90,8 +108,8 @@ userData.id = formData.id; // Include email in userData
                         className={`form-control form-control-lg ${emailError && 'is-invalid'}`}
                         placeholder="Email"
                         name="email"
-                        value={formData.email}
-                        onChange={handleChange}
+                        value={email}
+                        onChange={e=>setEmail(e.target.value)}
                         required
                       />
                       {emailError && <div className="invalid-feedback">{emailError}</div>}
@@ -104,8 +122,8 @@ userData.id = formData.id; // Include email in userData
                         className={`form-control form-control-lg ${passwordError && 'is-invalid'}`}
                         placeholder="Password"
                         name="password"
-                        value={formData.password}
-                        onChange={handleChange}
+                        value={password}
+                        onChange={e=>setPassword(e.target.value)}
                         required
                       />
                       {passwordError && <div className="invalid-feedback">{passwordError}</div>}
@@ -131,3 +149,6 @@ userData.id = formData.id; // Include email in userData
     </>
   );
 }
+
+
+export default Login
